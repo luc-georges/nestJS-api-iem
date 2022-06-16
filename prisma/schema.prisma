@@ -15,23 +15,32 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email String
+  email String @unique
   hash String
 
   firstname String?
   lastname String?
+
+  tickets Ticket[]
+  @@map("users")
+
 }
+
 model Parking {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name String @unique
   location String
   availableSlots Int
   totalSlots Int
   freeLengthInMin Int
   pricePerHour Int
+
+  tickets Ticket[]
+
+  @@map("parkings")
 }
 model Ticket {
   id Int @id @default(autoincrement())
@@ -41,4 +50,13 @@ model Ticket {
   arival DateTime @default(now())
   departure DateTime
   paid Boolean
+
+  parking  Parking  @relation(fields: [parkingID], references: [id])
+  parkingID Int
+
+  user User @relation(fields: [userID], references: [id])
+  userID Int
+
+
+    @@map("tickets")
 }
