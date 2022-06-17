@@ -6,6 +6,7 @@ import * as pactum from 'pactum'
 import { PrismaService } from '../src/prisma/prisma.service';
 import { AppModule } from '../src/app.module';
 import { AuthDto } from '../src/auth/dto';
+import { EditParkingDto } from 'src/parking/dto';
 
 describe('App e2e',() => {
   let app : INestApplication
@@ -66,20 +67,59 @@ describe('App e2e',() => {
         return pactum.spec().post('/auth/signin',).expectStatus(400);
       })
       it('should signin', ()=>{
-        return pactum.spec().post('/auth/signin',).withBody(dto).expectStatus(201);
+        return pactum.spec().post('/auth/signin',).withBody(dto).expectStatus(201).stores('userAt', 'access_token');;
       })
       
     });
   });
   describe('Parking', () => {
-    describe('Get All', () => {
-      it.todo('should Get All parkings')
+    describe('Get empty parking', () => {
+      it('should get parkings',()=>{
+        return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBody([]);
+      })
     });
-    describe('Get By id', () => {
-      it.todo('should get parking by id')
+    describe('Create parking', () => {
+      const dto = {
+        name: 'test',
+        location: 'test location',
+        availableSlots: 10,
+        totalSlots: 10,
+        freeLengthInMin: 1,
+        pricePerHour: 10,
+      
+      }
+      it('should create parking',()=>{
+        return pactum.spec().post('/parkings',).withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(201).stores('parkingId','id');
+      })
     });
-    
-    
+    describe('Get parkings', () => {
+      it('should get parkings',()=>{
+        return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(1);
+      })
+    });
+    describe('Get parking by ID', () => {
+      it('should get parking',()=>{
+        return pactum.spec().get('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains('$S{parkingId}');
+      })
+    });
+    describe('Edit parking by ID', () => {
+      const dto: EditParkingDto = {
+        name:'new name'
+      }
+      it('should edit parking',()=>{
+        return pactum.spec().patch('/parkings/{id}',).withPathParams('id','$S{parkingId}').withBody(dto).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains(dto.name);
+      })
+    });
+    describe('Delete Parking', () => {
+      it('should delete parking',()=>{
+        return pactum.spec().delete('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204);
+      })
+    });
+    describe('check Deleted Parking', () => {
+      it('should get no parkings',()=>{
+        return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(0);
+      })
+    });
   });
   describe('Ticket', () => {
     describe('Get All', () => {
