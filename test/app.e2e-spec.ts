@@ -36,6 +36,7 @@ describe('App e2e',() => {
       email: 'test@gmail.com',
       password:'test123456'
     }
+    
     describe('Signup', () => {
       it('should throw exeption if email empty',()=>{
         return pactum.spec().post('/auth/signup',).withBody({password:dto.password}).expectStatus(400);
@@ -53,6 +54,7 @@ describe('App e2e',() => {
         return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(201);
       })
     });
+
     describe('Signin', () => {
       it('should throw exeption if email empty',()=>{
         return pactum.spec().post('/auth/signin',).withBody({password:dto.password}).expectStatus(400);
@@ -72,12 +74,14 @@ describe('App e2e',() => {
       
     });
   });
+
   describe('Parking', () => {
     describe('Get empty parking', () => {
       it('should get parkings',()=>{
         return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBody([]);
       })
     });
+
     describe('Create parking', () => {
       const dto = {
         name: 'test',
@@ -92,16 +96,19 @@ describe('App e2e',() => {
         return pactum.spec().post('/parkings',).withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(201).stores('parkingId','id');
       })
     });
+
     describe('Get parkings', () => {
       it('should get parkings',()=>{
         return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(1);
       })
     });
+
     describe('Get parking by ID', () => {
       it('should get parking',()=>{
         return pactum.spec().get('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains('$S{parkingId}');
       })
     });
+
     describe('Edit parking by ID', () => {
       const dto: EditParkingDto = {
         name:'new name'
@@ -110,6 +117,7 @@ describe('App e2e',() => {
         return pactum.spec().patch('/parkings/{id}',).withPathParams('id','$S{parkingId}').withBody(dto).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains(dto.name);
       })
     });
+
     describe('Delete Parking', () => {
       it('should delete parking',()=>{
         return pactum.spec().delete('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204);
@@ -121,6 +129,8 @@ describe('App e2e',() => {
       })
     });
   });
+
+
   describe('Ticket', () => {
     describe('Get All', () => {
       it.todo('should Get All tickets ')
