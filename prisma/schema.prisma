@@ -44,12 +44,12 @@ model Parking {
 }
 model Ticket {
   id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 
-  arival DateTime @default(now())
-  departure DateTime
-  paid Boolean
+  arival DateTime? @default(now())
+  departure DateTime?
+  paid Boolean? @default(false)
 
   parking  Parking  @relation(fields: [parkingID], references: [id])
   parkingID Int

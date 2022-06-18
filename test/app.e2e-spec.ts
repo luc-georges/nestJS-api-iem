@@ -51,7 +51,7 @@ describe('App e2e',() => {
         return pactum.spec().post('/auth/signup',).expectStatus(400);
       })
       it('should signup',()=>{
-        return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(201);
+        return pactum.spec().post('/auth/signup',).withBody(dto).expectStatus(201).stores('userId','id');
       })
     });
 
@@ -118,30 +118,63 @@ describe('App e2e',() => {
       })
     });
 
-    describe('Delete Parking', () => {
-      it('should delete parking',()=>{
-        return pactum.spec().delete('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204);
-      })
-    });
-    describe('check Deleted Parking', () => {
-      it('should get no parkings',()=>{
-        return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(0);
-      })
-    });
+
   });
 
 
   describe('Ticket', () => {
-    describe('Get All', () => {
-      it.todo('should Get All tickets ')
+    describe('Get empty tickets', () => {
+      it('should get tickets',()=>{
+        return pactum.spec().get('/tickets/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBody([]);
+      })
     });
-    describe('Get By id', () => {
-      it.todo('should Get tickets by Id')
+    describe('Create tickets', () => {
+      const dto = {
+        parkingID: '$S{parkingId}',
+      }
+      it('should create ticket',()=>{
+        return pactum.spec().post('/tickets',).withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(201).stores('ticketId','id');
+      })
     });
-    describe('Price Check', () => {
-      it.todo('should pass price check the ticket')
+    describe('Get all tickets', () => {
+      it('should get tickets',()=>{
+        return pactum.spec().get('/tickets/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(1);
+      })
     });
-    
+    describe('Get ticket by id', () => {
+      it('should get ticket',()=>{
+        return pactum.spec().get('/tickets/{id}',).withPathParams('id','$S{ticketId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200);
+      })
+    });
+    describe('Get ticket price by id', () => {
+      it('should get price',()=>{
+        return pactum.spec().get('/tickets/price/{id}',).withPathParams('id','$S{ticketId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200);
+      })
+    });
+    describe('Set ticket to paid', () => {
+      let dto = {
+        paid:true
+      }
+      it('should update ticket',()=>{
+        return pactum.spec().patch('/tickets/{id}',).withPathParams('id','$S{ticketId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains(dto.paid);
+      })
+    });
+    describe('Delete ticket', () => {
+      it('should delete ticket',()=>{
+        return pactum.spec().delete('/tickets/{id}',).withPathParams('id','$S{ticketId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204).inspect();
+      })
+    });
   });
 
+
+  describe('Delete Parking', () => {
+    it('should delete parking',()=>{
+      return pactum.spec().delete('/parkings/{id}',).withPathParams('id','$S{parkingId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204);
+    })
+  });
+  describe('check Deleted Parking', () => {
+    it('should get no parkings',()=>{
+      return pactum.spec().get('/parkings/all',).withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(0);
+    })
+  });
 }) 
