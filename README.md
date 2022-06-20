@@ -94,7 +94,7 @@ $ yarn test:e2e
 | GET | /parkings/:id | :id = parking id | Parking object | Get parking by id |
 | POST | /parkings |Requires: { name: string, location: string, availableSlots: number, totalSlots: number, freeLengthInMin: number, pricePerHour: number } | Parking object | Create a new parking|
 | PATCH | /parkings/:id | :id = parking id / Requires: Any keys from parking object| Parking object | Update a parking |
-| GET | /parkings/:id | :id = parking id |  | Delete parking by id |
+| DELETE | /parkings/:id | :id = parking id |  | Delete parking by id |
 <br/>
 
 ### Ticket: 
