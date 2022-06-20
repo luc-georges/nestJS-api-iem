@@ -37,6 +37,20 @@ Basic Api that could be used for parking
 $ yarn install
 ```
 
+## Environment variable
+.env file to create at the root of the project:
+
+```bash
+DATABASE_URL="postgresql://postgres:123@localhost:5434/iem?schema=public"
+JWT_SECRET="shhhThatsASecret"
+```
+.env.test file to create at the root of the project:
+```bash
+DATABASE_URL="postgresql://postgres:123@localhost:5435/iem?schema=public"
+JWT_SECRET="shhhThatsASecret"
+```
+
+
 ## Setup and start database for development (Require Docker)
 
 ```bash
