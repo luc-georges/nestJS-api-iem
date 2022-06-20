@@ -24,19 +24,30 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Basic Api that could be used for parking
+- User signup / User login
+- Create parking with differents fees (aswell as free periods)
+- Create Tiket linked to a parking
+- Ticket price check
+
 
 ## Installation
 
 ```bash
-$ npm install
+$ yarn install
+```
+
+## Setup and start database for development (Require Docker)
+
+```bash
+$ yarn db:dev:restart
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 
 # watch mode
 $ npm run start:dev
@@ -45,29 +56,54 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Setup and start database for test (Require Docker)
+
+```bash
+$ yarn db:test:restart
+```
+
 ## Test
 
 ```bash
-# unit tests
-$ npm run test
 
 # e2e tests
-$ npm run test:e2e
+$ yarn test:e2e
 
-# test coverage
-$ npm run test:cov
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Api Doc
+<br/>
 
-## Stay in touch
+### Auth: 
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Méthode http | Url | Méthod|Return| Commentaire |
+| ----------- | ------| ------ |------|-----|
+| POST | /auth/signup | Require : email, password| User object | Create a new user|
+| POST | /auth/signin | Require : email, password | Access token | Log the user in |
+<br/>
 
-## License
+## All following routes requires Access_Token in header as Authorisation: Bearer {access_token}
+<br/>
 
-Nest is [MIT licensed](LICENSE).
+### Parking: 
+
+| Méthode http | Url | Méthod|Return| Commentaire |
+| ----------- | ------| ------ |------|-----|
+| GET | /parkings | | Parkings list | Get all parkings existing in database|
+| GET | /parkings/:id | :id = parking id | Parking object | Get parking by id |
+| POST | /parkings |Requires: { name: string, location: string, availableSlots: number, totalSlots: number, freeLengthInMin: number, pricePerHour: number } | Parking object | Create a new parking|
+| PATCH | /parkings/:id | :id = parking id / Requires: Any keys from parking object| Parking object | Update a parking |
+| GET | /parkings/:id | :id = parking id |  | Delete parking by id |
+<br/>
+
+### Ticket: 
+
+| Méthode http | Url | Méthod|Return| Commentaire |
+| ----------- | ------| ------ |------|-----|
+| GET | /tickets | | tickets list | Get all tickets existing in database|
+| GET | /tickets/:id | :id = ticket id | ticket object | Get ticket by id |
+| GET | /tickets/price/:id | :id = ticket id | ticket object | Get the current price of the ticket |
+| POST | /tickets |Requires: { parkingID: number } | Ticket object | Create a new ticket|
+| PATCH | /tickets/:id | :id = ticket id / | Goodbye message | Update the ticket once paid, set paid to "true" |
+| DELETE | /tickets/:id | :id = parking id |  | Delete ticket by id |
